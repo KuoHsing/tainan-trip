@@ -25,11 +25,13 @@
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Noto Sans TC", "PingFang TC", system-ui, sans-serif; font-size: 17px; line-height: 1.75; }
-    .hero { position: relative; overflow: hidden; padding: 56px 22px 50px; text-align: left; background: var(--ink); color: #fffaf0; }
-    .hero::after { content: ""; position: absolute; width: 220px; height: 220px; right: -48px; bottom: -92px; border: 1px solid rgb(255 250 240 / 28%); border-radius: 50%; box-shadow: 0 0 0 22px rgb(255 250 240 / 5%), 0 0 0 48px rgb(255 250 240 / 5%); }
-    .eyebrow { margin: 0 0 14px; color: #e3bd78; font-size: .76rem; font-weight: 750; letter-spacing: .2em; }
+    .hero { position: relative; display: flex; min-height: clamp(260px, 34vw, 420px); align-items: center; overflow: hidden; padding: 0 22px; text-align: left; background: var(--paper); color: var(--ink); }
+    .hero-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 65%; }
+    .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--paper) 0%, rgb(245 241 232 / 96%) 28%, rgb(245 241 232 / 76%) 43%, rgb(245 241 232 / 0%) 70%); }
+    .hero-content { position: relative; z-index: 1; width: min(100%, 1080px); margin: 0 auto; }
+    .eyebrow { margin: 0 0 14px; color: var(--accent); font-size: .76rem; font-weight: 750; letter-spacing: .2em; }
     h1 { max-width: 620px; margin: 0; font-size: clamp(2.35rem, 10vw, 4.1rem); line-height: 1.15; letter-spacing: .06em; }
-    .intro { max-width: 28em; margin: 18px 0 0; color: #d4dfd9; font-size: 1rem; }
+    .intro { max-width: 28em; margin: 18px 0 0; color: var(--muted); font-size: 1rem; }
     main { width: min(100% - 32px, 700px); margin: 34px auto 48px; }
     .day { --day-accent: var(--accent); --map-wash: #f0e8d8; margin: 0 0 34px; }
     .day-two { --day-accent: #52796e; --map-wash: #e4ede6; }
@@ -58,15 +60,18 @@
     #before-trip p strong { color: var(--accent); }
     footer { padding: 0 18px 32px; color: var(--muted); text-align: center; font-size: .83rem; letter-spacing: .04em; }
     @media (max-width: 380px) { .route-map { margin-left: 8px; padding: 9px 8px 7px; } .stops { margin-left: 15px; padding-left: 18px; } .stop::before { left: -32px; } .stop-top { grid-template-columns: 54px minmax(0, 1fr); gap: 7px; } .stop p { margin-left: 61px; } }
-    @media (min-width: 600px) { .hero { padding: 72px max(32px, calc((100vw - 700px) / 2)) 62px; } main { margin-top: 42px; } .day { margin-bottom: 40px; } .stop { padding-bottom: 23px; } }
+    @media (min-width: 600px) { .hero { padding-right: max(32px, calc((100vw - 1080px) / 2)); padding-left: max(32px, calc((100vw - 1080px) / 2)); } main { margin-top: 42px; } .day { margin-bottom: 40px; } .stop { padding-bottom: 23px; } }
     @media (prefers-reduced-motion: no-preference) { .stop { animation: arrive .45s both; } .stop:nth-child(2) { animation-delay: .04s; } .stop:nth-child(3) { animation-delay: .08s; } .stop:nth-child(4) { animation-delay: .12s; } @keyframes arrive { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } } }
   </style>
 </head>
 <body>
   <header class="hero">
-    <p class="eyebrow">SLOW DAYS IN TAINAN</p>
-    <h1>屬於你的菜</h1>
-    <p class="intro">散步、吃點心，把步調放慢一點。</p>
+    <img class="hero-art" src="tainan-cover.png" alt="兩位朋友在台南老街散步的水彩插畫">
+    <div class="hero-content">
+      <p class="eyebrow">SLOW DAYS IN TAINAN</p>
+      <h1>屬於你的菜</h1>
+      <p class="intro">散步、吃點心，把步調放慢一點。</p>
+    </div>
   </header>
 
   <main>
