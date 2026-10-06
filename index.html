@@ -33,6 +33,12 @@
     h1 { max-width: 620px; margin: 0; font-size: clamp(2.35rem, 10vw, 4.1rem); line-height: 1.15; letter-spacing: .06em; }
     .intro { max-width: 28em; margin: 18px 0 0; color: var(--muted); font-size: 1rem; }
     main { width: min(100% - 32px, 700px); margin: 34px auto 48px; }
+    .day-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 24px; }
+    .day-switch-label { margin-right: 2px; font-size: .92rem; font-weight: 750; }
+    .day-choice { min-height: 42px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; }
+    .day-choice[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: #fffaf0; }
+    .day-choice:focus-visible, .stop-check input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    .day[hidden] { display: none; }
     .day { --day-accent: var(--accent); --map-wash: #f0e8d8; margin: 0 0 34px; }
     .day-two { --day-accent: #52796e; --map-wash: #e4ede6; }
     .day-heading { display: flex; align-items: center; gap: 13px; margin: 0 0 17px; font-size: 1.35rem; letter-spacing: .04em; }
@@ -48,7 +54,11 @@
     .stop { position: relative; padding: 0 0 20px; }
     .stop:last-child { padding-bottom: 0; }
     .stop::before { content: attr(data-step); position: absolute; top: 0; left: -37px; display: grid; width: 27px; height: 27px; place-items: center; border: 2px solid var(--paper); border-radius: 50%; background: var(--day-accent); box-shadow: 0 0 0 1px var(--day-accent); color: white; font-size: .68rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .stop-top { display: grid; grid-template-columns: 62px minmax(0, 1fr); align-items: baseline; gap: 10px; }
+    .stop-top { display: grid; grid-template-columns: 62px minmax(0, 1fr) 28px; align-items: baseline; gap: 10px; }
+    .stop-icon { display: inline-block; margin-right: .32em; font-size: .95em; vertical-align: baseline; }
+    .stop-check { display: grid; width: 28px; height: 28px; place-items: center; align-self: center; cursor: pointer; }
+    .stop-check input { width: 20px; height: 20px; margin: 0; accent-color: var(--day-accent); cursor: pointer; }
+    .stop:has(.stop-check input:checked) h3 { opacity: .58; text-decoration: line-through; text-decoration-color: var(--day-accent); }
     time { color: var(--day-accent); font-weight: 800; font-size: .95rem; font-variant-numeric: tabular-nums; }
     h3 { margin: 0; font-size: 1.13rem; line-height: 1.45; }
     .stop p { margin: 4px 0 0 72px; color: var(--muted); font-size: .94rem; }
@@ -59,7 +69,7 @@
     #before-trip p { margin: 0 0 0 23px; padding: 10px 0 10px 33px; border-left: 1px solid var(--line); color: var(--muted); font-size: .95rem; }
     #before-trip p strong { color: var(--accent); }
     footer { padding: 0 18px 32px; color: var(--muted); text-align: center; font-size: .83rem; letter-spacing: .04em; }
-    @media (max-width: 380px) { .route-map { margin-left: 8px; padding: 9px 8px 7px; } .stops { margin-left: 15px; padding-left: 18px; } .stop::before { left: -32px; } .stop-top { grid-template-columns: 54px minmax(0, 1fr); gap: 7px; } .stop p { margin-left: 61px; } }
+    @media (max-width: 380px) { .route-map { margin-left: 8px; padding: 9px 8px 7px; } .stops { margin-left: 15px; padding-left: 18px; } .stop::before { left: -32px; } .stop-top { grid-template-columns: 54px minmax(0, 1fr) 26px; gap: 7px; } .stop-check { width: 26px; } .stop p { margin-left: 61px; } }
     @media (min-width: 600px) { .hero { padding-right: max(32px, calc((100vw - 1080px) / 2)); padding-left: max(32px, calc((100vw - 1080px) / 2)); } main { margin-top: 42px; } .day { margin-bottom: 40px; } .stop { padding-bottom: 23px; } }
     @media (prefers-reduced-motion: no-preference) { .stop { animation: arrive .45s both; } .stop:nth-child(2) { animation-delay: .04s; } .stop:nth-child(3) { animation-delay: .08s; } .stop:nth-child(4) { animation-delay: .12s; } @keyframes arrive { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } } }
   </style>
@@ -75,7 +85,12 @@
   </header>
 
   <main>
-    <section class="day" aria-labelledby="day-one">
+    <nav class="day-switch" aria-label="選擇今天查看的行程">
+      <span class="day-switch-label">今天看哪一天？</span>
+      <button class="day-choice" type="button" data-day-target="day-one-section" aria-controls="day-one-section" aria-pressed="true">第一天行程</button>
+      <button class="day-choice" type="button" data-day-target="day-two-section" aria-controls="day-two-section" aria-pressed="false">第二天行程</button>
+    </nav>
+    <section class="day" id="day-one-section" aria-labelledby="day-one">
       <h2 class="day-heading" id="day-one"><span class="day-number">01</span>第一天・老城散步</h2>
       <figure class="route-map" aria-label="第一天四個站點的順序示意圖">
         <svg viewBox="0 0 640 150" role="img" aria-labelledby="map-one-title map-one-desc">
@@ -91,14 +106,14 @@
         <figcaption>路線順序示意・非實際比例</figcaption>
       </figure>
       <div class="stops">
-        <article class="stop" data-step="01"><div class="stop-top"><time>10:00</time><h3>阿霞早午餐（示意）</h3></div><p>先用一頓在地風味早餐開啟旅程，吃飽再慢慢逛老城。</p></article>
-        <article class="stop" data-step="02"><div class="stop-top"><time>11:30</time><h3>赤崁樓</h3></div><p>走進台南的歷史街區，看看古蹟，也感受巷弄裡的日常。</p></article>
-        <article class="stop" data-step="03"><div class="stop-top"><time>14:00</time><h3>林百貨</h3></div><p>逛逛老屋裡的小店和選物，順道上樓看看城市風景。</p></article>
-        <article class="stop" data-step="04"><div class="stop-top"><time>17:30</time><h3>小島旅店（示意）</h3></div><p>先回住宿放行李、休息一下，晚上再輕鬆出門吃晚餐。</p></article>
+        <article class="stop" data-step="01"><div class="stop-top"><time>10:00</time><h3><span class="stop-icon" aria-hidden="true">🍜</span>阿霞早午餐（示意）</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-one-01" aria-label="完成阿霞早午餐（示意）"></label></div><p>先用一頓在地風味早餐開啟旅程，吃飽再慢慢逛老城。</p></article>
+        <article class="stop" data-step="02"><div class="stop-top"><time>11:30</time><h3><span class="stop-icon" aria-hidden="true">📍</span>赤崁樓</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-one-02" aria-label="完成赤崁樓"></label></div><p>走進台南的歷史街區，看看古蹟，也感受巷弄裡的日常。</p></article>
+        <article class="stop" data-step="03"><div class="stop-top"><time>14:00</time><h3><span class="stop-icon" aria-hidden="true">📍</span>林百貨</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-one-03" aria-label="完成林百貨"></label></div><p>逛逛老屋裡的小店和選物，順道上樓看看城市風景。</p></article>
+        <article class="stop" data-step="04"><div class="stop-top"><time>17:30</time><h3><span class="stop-icon" aria-hidden="true">📍</span>小島旅店（示意）</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-one-04" aria-label="完成小島旅店（示意）"></label></div><p>先回住宿放行李、休息一下，晚上再輕鬆出門吃晚餐。</p></article>
       </div>
     </section>
 
-    <section class="day day-two" aria-labelledby="day-two">
+    <section class="day day-two" id="day-two-section" aria-labelledby="day-two" hidden>
       <h2 class="day-heading" id="day-two"><span class="day-number">02</span>第二天・慢慢吃逛</h2>
       <figure class="route-map" aria-label="第二天四個站點的順序示意圖">
         <svg viewBox="0 0 640 150" role="img" aria-labelledby="map-two-title map-two-desc">
@@ -114,10 +129,10 @@
         <figcaption>路線順序示意・非實際比例</figcaption>
       </figure>
       <div class="stops">
-        <article class="stop" data-step="01"><div class="stop-top"><time>09:00</time><h3>巷口豆花（示意）</h3></div><p>來碗清爽的甜湯當早餐，留點胃口給接下來的台南小吃。</p></article>
-        <article class="stop" data-step="02"><div class="stop-top"><time>10:30</time><h3>神農街</h3></div><p>沿著老街散步，看看老屋立面和巷子裡藏著的小店。</p></article>
-        <article class="stop" data-step="03"><div class="stop-top"><time>13:00</time><h3>安平老街・周家蝦捲（示意）</h3></div><p>逛逛安平街區，再挑幾樣喜歡的小吃當作午餐。</p></article>
-        <article class="stop" data-step="04"><div class="stop-top"><time>15:30</time><h3>安平樹屋</h3></div><p>在老倉庫與榕樹交織的空間裡散步，替旅程收個悠閒的尾。</p></article>
+        <article class="stop" data-step="01"><div class="stop-top"><time>09:00</time><h3><span class="stop-icon" aria-hidden="true">🍧</span>巷口豆花（示意）</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-two-01" aria-label="完成巷口豆花（示意）"></label></div><p>來碗清爽的甜湯當早餐，留點胃口給接下來的台南小吃。</p></article>
+        <article class="stop" data-step="02"><div class="stop-top"><time>10:30</time><h3><span class="stop-icon" aria-hidden="true">📍</span>神農街</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-two-02" aria-label="完成神農街"></label></div><p>沿著老街散步，看看老屋立面和巷子裡藏著的小店。</p></article>
+        <article class="stop" data-step="03"><div class="stop-top"><time>13:00</time><h3><span class="stop-icon" aria-hidden="true">🍜</span>安平老街・周家蝦捲（示意）</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-two-03" aria-label="完成安平老街・周家蝦捲（示意）"></label></div><p>逛逛安平街區，再挑幾樣喜歡的小吃當作午餐。</p></article>
+        <article class="stop" data-step="04"><div class="stop-top"><time>15:30</time><h3><span class="stop-icon" aria-hidden="true">📍</span>安平樹屋</h3><label class="stop-check"><input type="checkbox" data-stop-id="day-two-04" aria-label="完成安平樹屋"></label></div><p>在老倉庫與榕樹交織的空間裡散步，替旅程收個悠閒的尾。</p></article>
       </div>
     </section>
 
@@ -132,6 +147,34 @@
   </section>
   <img src="tainan-trip-qr.png" alt="台南兩天一夜行程 QR 碼" style="display:block;width:180px;max-width:100%;height:auto;margin:0 auto 28px">
   <footer>台南小旅行提案 · 留一點空白給沿途的驚喜</footer>
+  <script>
+    const storagePrefix = "tainan-trip-";
+    const dayButtons = [...document.querySelectorAll("[data-day-target]")];
+    const daySections = [...document.querySelectorAll(".day[id]")];
+    const stopChecks = [...document.querySelectorAll("[data-stop-id]")];
+
+    function readSaved(key) {
+      try { return localStorage.getItem(storagePrefix + key); } catch { return null; }
+    }
+    function saveValue(key, value) {
+      try { localStorage.setItem(storagePrefix + key, value); } catch { /* Keep the page usable if storage is unavailable. */ }
+    }
+    function showDay(sectionId) {
+      daySections.forEach((section) => { section.hidden = section.id !== sectionId; });
+      dayButtons.forEach((button) => { button.setAttribute("aria-pressed", String(button.dataset.dayTarget === sectionId)); });
+      saveValue("selected-day", sectionId);
+    }
+
+    dayButtons.forEach((button) => button.addEventListener("click", () => showDay(button.dataset.dayTarget)));
+    const savedDay = readSaved("selected-day");
+    showDay(daySections.some((section) => section.id === savedDay) ? savedDay : "day-one-section");
+
+    stopChecks.forEach((checkbox) => {
+      const key = "stop-" + checkbox.dataset.stopId;
+      checkbox.checked = readSaved(key) === "done";
+      checkbox.addEventListener("change", () => saveValue(key, checkbox.checked ? "done" : ""));
+    });
+  </script>
 </body>
 </html>
 
